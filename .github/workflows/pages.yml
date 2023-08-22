@@ -1,0 +1,47 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy to Github Pages
+        env:
+          GIT_NAME: Simple
+          GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+          REPO_NAME: dashboard
+          REPO: github.com/thesixonenine/dashboard
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          mkdir ./tmp
+          cd tmp/
+          git clone -b pages "https://$GH_TOKEN@$REPO"
+          mv ./$REPO_NAME/.git/ ./
+          rm -rf ./$REPO_NAME/*
+          mv ./.git ./$REPO_NAME/
+          mv ../dist/* ./$REPO_NAME/
+          cd $REPO_NAME/
+          git add .
+          git config --global user.name $GIT_NAME
+          git config --global user.email $GIT_EMAIL
+          git commit -m "Site deployed by GitHub Actions"
+          git push
