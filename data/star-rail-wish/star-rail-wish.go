@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 )
 
 var re = regexp.MustCompile(`\p{C}`)
@@ -25,7 +26,7 @@ var gachaTypeMap = map[string]string{
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
 func main() {
-	filePath := "C:\\Program Files\\Star Rail\\Game\\StarRail_Data\\webCaches\\2.14.0.0\\Cache\\Cache_Data\\data_2"
+	filePath := "C:\\Program Files\\Star Rail\\Game\\StarRail_Data\\webCaches\\2.15.0.0\\Cache\\Cache_Data\\data_2"
 	FindAllWish(FindURL(filePath))
 }
 
@@ -116,6 +117,7 @@ func FindAllWish(domainLink string, m map[string]string) {
 }
 
 func FetchData(link string) (Page[HKRPGWish], error) {
+	time.Sleep(8 * time.Second)
 	resp, err := http.Get(link)
 	if err != nil {
 		return Page[HKRPGWish]{}, err
