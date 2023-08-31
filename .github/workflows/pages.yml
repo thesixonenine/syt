@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: pages
 
 on:
   workflow_dispatch:
@@ -43,5 +43,4 @@ jobs:
           git add .
           git config --global user.name $GIT_NAME
           git config --global user.email $GIT_EMAIL
-          git commit -m "Site deployed by GitHub Actions"
-          git push
+          git commit -m "Pages deployed by GitHub Actions" && git push
