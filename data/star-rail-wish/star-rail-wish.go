@@ -15,6 +15,9 @@ import (
 	"time"
 )
 
+const WishHistoryFilePath = "C:\\Program Files\\Star Rail\\Game\\StarRail_Data\\webCaches\\2.15.0.0\\Cache\\Cache_Data\\data_2"
+const JSONFilePath = "../../public/data/star-rail-wish.json"
+
 var re = regexp.MustCompile(`\p{C}`)
 
 var gachaTypeMap = map[string]string{
@@ -26,8 +29,7 @@ var gachaTypeMap = map[string]string{
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
 func main() {
-	filePath := "C:\\Program Files\\Star Rail\\Game\\StarRail_Data\\webCaches\\2.15.0.0\\Cache\\Cache_Data\\data_2"
-	FindAllWish(FindURL(filePath))
+	FindAllWish(FindURL(WishHistoryFilePath))
 }
 
 func FindURL(filePath string) (string, map[string]string) {
@@ -67,14 +69,6 @@ func ParseQuery(q string) map[string]string {
 	return m
 }
 
-func MapToStr(m map[string]string) string {
-	var sl []string
-	for k, v := range m {
-		sl = append(sl, k+"="+v)
-	}
-	return strings.Join(sl, "&")
-}
-
 func FindAllWish(domainLink string, m map[string]string) {
 	allList := map[string][]HKRPGWish{}
 	for k, v := range gachaTypeMap {
@@ -106,14 +100,47 @@ func FindAllWish(domainLink string, m map[string]string) {
 		}
 		allList[k] = gachaList
 	}
+	MergeToFile(allList)
+}
+
+func MergeToFile(allList map[string][]HKRPGWish) {
+	file, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
+	if err != nil {
+		fmt.Printf("打开文件失败: %s\n", err.Error())
+	}
+	defer file.Close()
+	all, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Printf("读取文件失败: %s\n", err.Error())
+	}
+	fmt.Printf("已经存储的数据:\n%s\n", string(all))
+	ist := map[string][]HKRPGWish{}
+	// _ = json.Unmarshal(all, &ist)
+	for s, wishes := range allList {
+		// TODO Simple 如果不同则append
+		ist[s] = append(ist[s], wishes...)
+	}
+	StoreToFile(ist)
+}
+
+func StoreToFile(allList map[string][]HKRPGWish) {
 	marshal, err := json.Marshal(allList)
 	if err != nil {
-		fmt.Println("JSON序列化失败: " + err.Error())
+		fmt.Printf("JSON序列化失败[%s]\n", err.Error())
+		return
 	}
-	err = os.WriteFile("../../public/data/star-rail-wish.json", marshal, syscall.O_RDWR|syscall.O_CREAT)
+	err = os.WriteFile(JSONFilePath, marshal, syscall.O_RDWR|syscall.O_CREAT)
 	if err != nil {
-		fmt.Println("写入文件失败: " + err.Error())
+		fmt.Printf("写入文件失败[%s]\n", err.Error())
 	}
+}
+
+func MapToStr(m map[string]string) string {
+	var sl []string
+	for k, v := range m {
+		sl = append(sl, k+"="+v)
+	}
+	return strings.Join(sl, "&")
 }
 
 func FetchData(link string) (Page[HKRPGWish], error) {
