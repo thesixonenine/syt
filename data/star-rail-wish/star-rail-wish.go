@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 	"syscall"
@@ -23,8 +24,8 @@ var re = regexp.MustCompile(`\p{C}`)
 var gachaTypeMap = map[string]string{
 	"11": "角色活动跃迁",
 	"12": "光锥活动跃迁",
-	"1":  "常驻跃迁",
-	"2":  "新手跃迁",
+	// "1": "常驻跃迁",
+	"2": "新手跃迁",
 }
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
@@ -115,15 +116,26 @@ func MergeToFile(allList map[string][]HKRPGWish) {
 	}
 	fmt.Printf("已经存储的数据:\n%s\n", string(all))
 	ist := map[string][]HKRPGWish{}
-	// _ = json.Unmarshal(all, &ist)
+	_ = json.Unmarshal(all, &ist)
 	for s, wishes := range allList {
-		// TODO Simple 如果不同则append
-		ist[s] = append(ist[s], wishes...)
+		// Simple 如果不同则append
+		istWishs := ist[s]
+		idList := []string{}
+		for i := range istWishs {
+			idList = append(idList, istWishs[i].Id)
+		}
+		for w := range wishes {
+			if slices.Contains(idList, wishes[w].Id) {
+				continue
+			}
+			ist[s] = append(ist[s], wishes[w])
+		}
 	}
 	StoreToFile(ist)
 }
 
 func StoreToFile(allList map[string][]HKRPGWish) {
+	allList = SortMapWish(allList)
 	marshal, err := json.Marshal(allList)
 	if err != nil {
 		fmt.Printf("JSON序列化失败[%s]\n", err.Error())
@@ -133,6 +145,17 @@ func StoreToFile(allList map[string][]HKRPGWish) {
 	if err != nil {
 		fmt.Printf("写入文件失败[%s]\n", err.Error())
 	}
+}
+
+func SortMapWish(ist map[string][]HKRPGWish) map[string][]HKRPGWish {
+	list := map[string][]HKRPGWish{}
+	for k, v := range ist {
+		sort.Slice(v, func(i, j int) bool {
+			return v[i].Id < v[j].Id
+		})
+		list[k] = v
+	}
+	return list
 }
 
 func MapToStr(m map[string]string) string {
