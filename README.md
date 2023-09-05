@@ -15,6 +15,7 @@
 - [] Office部署文件编写
 - [] Windows环境搭建(powershell配置文件)
 - [] 无障碍APP开发
+- [x] 米游社签到脚本
 
 ### Game
 
