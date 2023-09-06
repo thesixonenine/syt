@@ -40,8 +40,9 @@ jobs:
           mv ./.git ./$REPO_NAME/
           mv ../dist/* ./$REPO_NAME/
           cd $REPO_NAME/
-          git config --global user.name $GIT_NAME
-          git config --global user.email $GIT_EMAIL
+          git config user.name $GIT_NAME
+          git config user.email $GIT_EMAIL
           git add .
+          git commit -m "Deploy to Github Pages"
           status_output=$(git status)
           if echo "$status_output" | grep -q "nothing to commit"; then echo "No changes to commit. Skipping git push."; else git push; fi
