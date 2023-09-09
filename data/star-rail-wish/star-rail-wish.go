@@ -24,8 +24,8 @@ var re = regexp.MustCompile(`\p{C}`)
 var gachaTypeMap = map[string]string{
 	"11": "角色活动跃迁",
 	"12": "光锥活动跃迁",
-	// "1": "常驻跃迁",
-	"2": "新手跃迁",
+	"1":  "常驻跃迁",
+	// "2": "新手跃迁",
 }
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
