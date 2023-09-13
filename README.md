@@ -14,16 +14,13 @@
 - [ ] yzk编写
 - [ ] Office部署文件编写
 - [ ] Windows环境搭建(powershell配置文件)
-- [ ] 无障碍APP开发
 - [x] 米游社签到脚本
 
 ### Game
 
 - [ ] 崩坏星穹铁道
 - [ ] 原神
-- [ ] 崩坏3
-- [ ] 崩坏2升级到280
-
+- [x] 崩坏3
 
 
 [gfm](https://github.github.com/gfm/)
