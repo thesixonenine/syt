@@ -7,24 +7,21 @@
 
 ### Develop
 
-- [ ] 软设证书邮寄
 - [ ] scoop添加rime输入法
 - [ ] api-book编写
 - [ ] dashboard编写
 - [ ] yzk编写
 - [ ] Office部署文件编写
 - [ ] Windows环境搭建(powershell配置文件)
+- [x] 软设证书邮寄
 - [x] 米游社签到脚本
 
 ### Game
 
 - [ ] 崩坏星穹铁道
 - [ ] 原神
-- [x] 崩坏3
-
 
 [gfm](https://github.github.com/gfm/)
-
 
 
 ## Vue 3 + Vite
