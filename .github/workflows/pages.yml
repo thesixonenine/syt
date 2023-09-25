@@ -45,4 +45,4 @@ jobs:
           git add .
           git commit -m "Deploy to Github Pages"
           status_output=$(git status)
-          if echo "$status_output" | grep -q "nothing to commit"; then echo "No changes to commit. Skipping git push."; else git push; fi
+          if echo "$status_output" | grep -q "publish"; then git push; else echo "Skipping git push."; fi
