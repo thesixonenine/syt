@@ -1,12 +1,6 @@
-<script lang="ts">
+<script setup lang="ts">
 // import HelloWorld from './components/HelloWorld.vue'
-import {defineAsyncComponent, defineComponent} from "vue";
-export default defineComponent({
-  name: "App",
-  components: {
-    "WishList": defineAsyncComponent(() => import('@/components/WishList.vue')),
-  }
-})
+import WishList from '@/components/WishList.vue'
 </script>
 
 <template>
