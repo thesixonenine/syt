@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+import WishList from '@/components/WishList.vue'
 </script>
 
 <template>
@@ -13,7 +14,8 @@ import HelloWorld from './components/HelloWorld.vue'
     </a>
   </div>
   -->
-  <HelloWorld msg="Dashboard" />
+  <!-- <HelloWorld msg="Dashboard" /> -->
+  <WishList />
 </template>
 
 <style scoped>

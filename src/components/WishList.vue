@@ -5,13 +5,21 @@ export default {
 </script>
 
 <template>
-<div id="wishTime"></div>
-<div id="wishName"></div>
-<div id="wishStar"></div>
-<div id="wishType"></div>
-<div id="wishRoll"></div>
+<div class="wishList">
+  <div id="wishTime">2023-09-25 17:20:20</div>
+  <div id="wishName">角色活动祈愿</div>
+  <div id="wishStar">5</div>
+  <div id="wishType">角色</div>
+  <div id="wishRoll">1</div>
+</div>
 </template>
 
 <style scoped>
-
+.wishList {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
 </style>
