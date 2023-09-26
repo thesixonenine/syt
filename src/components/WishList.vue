@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted} from "vue";
-import wishJson from '@/../public/data/star-rail-wish.json'
+import wishJson from '@/assets/data/star-rail-wish.json'
 
 class WishItem {
   count: string
@@ -15,7 +15,7 @@ class WishItem {
   time: string
   uid: string
 
-  constructor(count: string, gacha_id: string, gacha_type: number, id: string, item_id: number, item_type: number, lang: number, name: number, rank_type: number, time: number, uid: number) {
+  constructor(count: string, gacha_id: string, gacha_type: string, id: string, item_id: string, item_type: string, lang: string, name: string, rank_type: string, time: string, uid: string) {
     this.count = count;
     this.gacha_id = gacha_id;
     this.gacha_type = gacha_type;
