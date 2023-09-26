@@ -54,22 +54,28 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="wishTable" v-for="wishItem in wishList">
-    <div id="wishTime">{{ wishItem.time }}</div>
-    <div id="wishName">{{ wishItem.name }}</div>
-    <div id="wishStar">{{ wishItem.item_type }}</div>
-    <div id="wishType">{{ wishItem.gacha_type }}</div>
-    <div id="wishRoll">{{ wishItem.rank_type }}</div>
-    <div id="uid">{{ wishItem.uid }}</div>
+  <div class="wishes">
+    <div class="wishTable" v-for="wishItem in wishList">
+      <div id="wishTime">{{ wishItem.time }}</div>
+      <div id="wishName">{{ wishItem.name }}</div>
+      <div id="wishStar">{{ wishItem.item_type }}</div>
+      <div id="wishType">{{ wishItem.gacha_type }}</div>
+      <div id="wishRoll">{{ wishItem.rank_type }}</div>
+      <div id="uid">{{ wishItem.uid }}</div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.wishes {
+  display: flex;
+  flex-direction: column;
+}
 .wishTable {
   height: 100%;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  flex-wrap: nowrap;
+  justify-content: space-around;
   align-items: center;
 }
 </style>
