@@ -1,18 +1,71 @@
 <script setup lang="ts">
+import {onMounted} from "vue";
+import wishJson from '@/../public/data/star-rail-wish.json'
+
+class WishItem {
+  count: string
+  gacha_id: string
+  gacha_type: string
+  id: string
+  item_id: string
+  item_type: string
+  lang: string
+  name: string
+  rank_type: string
+  time: string
+  uid: string
+
+  constructor(count: string, gacha_id: string, gacha_type: number, id: string, item_id: number, item_type: number, lang: number, name: number, rank_type: number, time: number, uid: number) {
+    this.count = count;
+    this.gacha_id = gacha_id;
+    this.gacha_type = gacha_type;
+    this.id = id;
+    this.item_id = item_id;
+    this.item_type = item_type;
+    this.lang = lang;
+    this.name = name;
+    this.rank_type = rank_type;
+    this.time = time;
+    this.uid = uid;
+  }
+}
+
+let wishList = new Array<WishItem>();
+for (const idx in wishJson[1]) {
+  const dx = <WishItem>(wishJson[1][idx]);
+  wishList.push(dx);
+}
+for (const idx in wishJson[2]) {
+  const dx = <WishItem>(wishJson[2][idx]);
+  wishList.push(dx);
+}
+for (const idx in wishJson[11]) {
+  const dx = <WishItem>(wishJson[11][idx]);
+  wishList.push(dx);
+}
+for (const idx in wishJson[12]) {
+  const dx = <WishItem>(wishJson[12][idx]);
+  wishList.push(dx);
+}
+console.log("length = " + wishList.length);
+onMounted(() => {
+  console.log("WishList.vue is now mounted.")
+})
 </script>
 
 <template>
-<div class="wishList">
-  <div id="wishTime">2023-09-25 17:20:20</div>
-  <div id="wishName">角色活动祈愿</div>
-  <div id="wishStar">5</div>
-  <div id="wishType">角色</div>
-  <div id="wishRoll">1</div>
-</div>
+  <div class="wishTable" v-for="wishItem in wishList">
+    <div id="wishTime">{{ wishItem.time }}</div>
+    <div id="wishName">{{ wishItem.name }}</div>
+    <div id="wishStar">{{ wishItem.item_type }}</div>
+    <div id="wishType">{{ wishItem.gacha_type }}</div>
+    <div id="wishRoll">{{ wishItem.rank_type }}</div>
+    <div id="uid">{{ wishItem.uid }}</div>
+  </div>
 </template>
 
 <style scoped>
-.wishList {
+.wishTable {
   height: 100%;
   display: flex;
   flex-wrap: wrap;
