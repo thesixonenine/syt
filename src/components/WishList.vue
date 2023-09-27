@@ -55,14 +55,28 @@ onMounted(() => {
 
 <template>
   <div class="wishes">
-    <div class="wishTable" v-for="wishItem in wishList">
-      <div id="wishTime">{{ wishItem.time }}</div>
-      <div id="wishName">{{ wishItem.name }}</div>
-      <div id="wishStar">{{ wishItem.item_type }}</div>
-      <div id="wishType">{{ wishItem.gacha_type }}</div>
-      <div id="wishRoll">{{ wishItem.rank_type }}</div>
-      <div id="uid">{{ wishItem.uid }}</div>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>祈愿时间</th>
+          <th>祈愿名称</th>
+          <th>星数</th>
+          <th>类型</th>
+          <th>rank类型</th>
+          <th>UID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="wishItem in wishList">
+          <td id="wishTime">{{ wishItem.time }}</td>
+          <td id="wishName">{{ wishItem.name }}</td>
+          <td id="wishStar">{{ wishItem.item_type }}</td>
+          <td id="wishType">{{ wishItem.gacha_type }}</td>
+          <td id="wishRoll">{{ wishItem.rank_type }}</td>
+          <td id="uid">{{ wishItem.uid }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -70,12 +84,9 @@ onMounted(() => {
 .wishes {
   display: flex;
   flex-direction: column;
+  background-color: wheat;
 }
-.wishTable {
-  height: 100%;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-around;
-  align-items: center;
+td {
+  text-align: center;
 }
 </style>
