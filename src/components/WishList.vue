@@ -58,22 +58,18 @@ onMounted(() => {
     <table>
       <thead>
         <tr>
-          <th>祈愿时间</th>
-          <th>祈愿名称</th>
-          <th>星数</th>
+          <th>时间</th>
+          <th>名称</th>
           <th>类型</th>
-          <th>rank类型</th>
-          <th>UID</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="wishItem in wishList">
           <td id="wishTime">{{ wishItem.time }}</td>
-          <td id="wishName">{{ wishItem.name }}</td>
+          <td v-if="wishItem.rank_type === '3'" id="wishName">{{ wishItem.name }}</td>
+          <td v-if="wishItem.rank_type === '4'" style="color: blue" id="wishName">{{ wishItem.name }}</td>
+          <td v-if="wishItem.rank_type === '5'" style="color: red" id="wishName">{{ wishItem.name }}</td>
           <td id="wishStar">{{ wishItem.item_type }}</td>
-          <td id="wishType">{{ wishItem.gacha_type }}</td>
-          <td id="wishRoll">{{ wishItem.rank_type }}</td>
-          <td id="uid">{{ wishItem.uid }}</td>
         </tr>
       </tbody>
     </table>
@@ -85,6 +81,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   background-color: wheat;
+  width: 320px;
 }
 td {
   text-align: center;
