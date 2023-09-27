@@ -81,7 +81,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   background-color: wheat;
-  width: 320px;
 }
 td {
   text-align: center;
