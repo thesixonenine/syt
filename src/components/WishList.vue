@@ -80,7 +80,18 @@ onMounted(() => {
 .wishes {
   display: flex;
   flex-direction: column;
+  background-color: white;
+  padding: 10px;
+  width: 100%;
+}
+table {
   background-color: wheat;
+  border: solid 1px;
+}
+th {
+  padding: 5px 0;
+  border-bottom: solid 1px;
+  margin-bottom: 10px;
 }
 td {
   text-align: center;
