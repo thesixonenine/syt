@@ -13,7 +13,6 @@
 - [ ] yzk编写
 - [ ] Office部署文件编写
 - [ ] Windows环境搭建(powershell配置文件)
-- [x] 软设证书邮寄
 - [x] 米游社签到脚本
 
 ### Game
