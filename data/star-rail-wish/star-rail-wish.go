@@ -32,29 +32,17 @@ var gachaTypeMap = map[string]string{
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
 func main() {
-	file, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
+	urlParam, err := FindURL(WishHistoryFilePath)
 	if err != nil {
-		fmt.Printf("打开文件失败: %s\n", err.Error())
+		panic(err)
 	}
-	defer file.Close()
-	all, err := io.ReadAll(file)
-	if err != nil {
-		fmt.Printf("读取文件失败: %s\n", err.Error())
-	}
-	// fmt.Printf("已经存储的数据:\n%s\n", string(all))
-	var out bytes.Buffer
-	err = json.Indent(&out, all, "", "\t")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// FindAllWish(FindURL(WishHistoryFilePath))
-	WriteToFile(out.Bytes())
+	FindAllWish(urlParam)
 }
 
-func FindURL(filePath string) (string, map[string]string) {
+func FindURL(filePath string) (UrlParam, error) {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
-		return "", nil
+		return UrlParam{}, nil
 	}
 	lastUrl := ""
 	nMap := map[string]string{}
@@ -76,7 +64,7 @@ func FindURL(filePath string) (string, map[string]string) {
 		}
 		lastUrl = u.Scheme + "://" + u.Host + u.Path
 	}
-	return lastUrl, nMap
+	return UrlParam{lastUrl, nMap}, nil
 }
 
 func ParseQuery(q string) map[string]string {
@@ -90,7 +78,8 @@ func ParseQuery(q string) map[string]string {
 	return m
 }
 
-func FindAllWish(domainLink string, m map[string]string) {
+func FindAllWish(urlParam UrlParam) {
+	m := urlParam.ParamMap
 	allList := map[string][]HKRPGWish{}
 	for k, v := range gachaTypeMap {
 		var gachaList []HKRPGWish
@@ -103,7 +92,7 @@ func FindAllWish(domainLink string, m map[string]string) {
 		m["end_id"] = "0"
 		m["size"] = strconv.Itoa(size)
 		for {
-			fetchData, _ := FetchData(domainLink + "?" + MapToStr(m))
+			fetchData, _ := FetchData(urlParam.BaseUrl + "?" + MapToStr(m))
 			dataList := fetchData.Data.List
 			for _, wish := range dataList {
 				gachaList = append(gachaList, wish)
@@ -127,9 +116,13 @@ func FindAllWish(domainLink string, m map[string]string) {
 func MergeToFile(allList map[string][]HKRPGWish) {
 	file, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
 	if err != nil {
-		fmt.Printf("打开文件失败: %s\n", err.Error())
+		panic(err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(err)
+		}
+	}()
 	all, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Printf("读取文件失败: %s\n", err.Error())
@@ -161,7 +154,16 @@ func StoreToFile(allList map[string][]HKRPGWish) {
 		fmt.Printf("JSON序列化失败[%s]\n", err.Error())
 		return
 	}
-	WriteToFile(marshal)
+	WriteToFile(JSONIndent(marshal))
+}
+
+func JSONIndent(marshal []byte) []byte {
+	var out bytes.Buffer
+	err := json.Indent(&out, marshal, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return out.Bytes()
 }
 
 func WriteToFile(marshal []byte) {
@@ -197,7 +199,11 @@ func FetchData(link string) (Page[HKRPGWish], error) {
 		return Page[HKRPGWish]{}, err
 	}
 	body := resp.Body
-	defer body.Close()
+	defer func() {
+		if err := body.Close(); err != nil {
+			panic(err)
+		}
+	}()
 	bodyByte, httpReadErr := io.ReadAll(resp.Body)
 	if httpReadErr != nil {
 		return Page[HKRPGWish]{}, httpReadErr
@@ -235,4 +241,9 @@ type Page[T any] struct {
 		Region         string `json:"region"`
 		RegionTimeZone int    `json:"region_time_zone"`
 	} `json:"data"`
+}
+
+type UrlParam struct {
+	BaseUrl  string
+	ParamMap map[string]string
 }
