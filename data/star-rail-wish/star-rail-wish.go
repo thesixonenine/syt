@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-const WishHistoryFilePath = "C:\\Program Files\\Star Rail\\Game\\StarRail_Data\\webCaches\\2.15.0.0\\Cache\\Cache_Data\\data_2"
+const WishHistoryFilePath = "C:\\Program Files\\Star Rail\\Game\\StarRail_Data\\webCaches\\2.18.0.0\\Cache\\Cache_Data\\data_2"
 const JSONFilePath = "../../src/assets/data/star-rail-wish.json"
 
 var re = regexp.MustCompile(`\p{C}`)
@@ -65,7 +65,9 @@ func ParseQuery(q string) map[string]string {
 	m := map[string]string{}
 	for _, s := range strings.Split(q, "&") {
 		split := strings.Split(s, "=")
-		m[split[0]] = split[1]
+		if len(split) >= 2 {
+			m[split[0]] = split[1]
+		}
 	}
 	return m
 }
