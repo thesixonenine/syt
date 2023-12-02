@@ -47,9 +47,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("格式化:\n%s\n", out.String())
 	// FindAllWish(FindURL(WishHistoryFilePath))
+	WriteToFile(out.Bytes())
 }
 
 func FindURL(filePath string) (string, map[string]string) {
