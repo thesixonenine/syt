@@ -162,7 +162,11 @@ func StoreToFile(allList map[string][]HKRPGWish) {
 		fmt.Printf("JSON序列化失败[%s]\n", err.Error())
 		return
 	}
-	err = os.WriteFile(JSONFilePath, marshal, syscall.O_RDWR|syscall.O_CREAT)
+	WriteToFile(marshal)
+}
+
+func WriteToFile(marshal []byte) {
+	err := os.WriteFile(JSONFilePath, marshal, syscall.O_RDWR|syscall.O_CREAT)
 	if err != nil {
 		fmt.Printf("写入文件失败[%s]\n", err.Error())
 	}
