@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -30,7 +32,24 @@ var gachaTypeMap = map[string]string{
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
 func main() {
-	FindAllWish(FindURL(WishHistoryFilePath))
+	file, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
+	if err != nil {
+		fmt.Printf("打开文件失败: %s\n", err.Error())
+	}
+	defer file.Close()
+	all, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Printf("读取文件失败: %s\n", err.Error())
+	}
+	// fmt.Printf("已经存储的数据:\n%s\n", string(all))
+	var out bytes.Buffer
+	err = json.Indent(&out, all, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("格式化:\n%s\n", out.String())
+	// FindAllWish(FindURL(WishHistoryFilePath))
 }
 
 func FindURL(filePath string) (string, map[string]string) {
