@@ -127,15 +127,14 @@ func MergeToFile(allList map[string][]HKRPGWish) {
 	if err != nil {
 		fmt.Printf("读取文件失败: %s\n", err.Error())
 	}
-	fmt.Printf("已经存储的数据:\n%s\n", string(all))
 	ist := map[string][]HKRPGWish{}
 	_ = json.Unmarshal(all, &ist)
 	for s, wishes := range allList {
 		// Simple 如果不同则append
-		istWishs := ist[s]
+		istWishes := ist[s]
 		idList := []string{}
-		for i := range istWishs {
-			idList = append(idList, istWishs[i].Id)
+		for i := range istWishes {
+			idList = append(idList, istWishes[i].Id)
 		}
 		for w := range wishes {
 			if slices.Contains(idList, wishes[w].Id) {
