@@ -32,15 +32,18 @@ var gachaTypeMap = map[string]string{
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
 func main() {
-	urlParam, err := FindURL(WishHistoryFilePath)
+	urlParam, err := FindURLFromLogFile()
 	if err != nil {
-		panic(err)
+		log.Fatalf("日志文件[%s]未找到", WishHistoryFilePath)
 	}
-	FindAllWish(urlParam)
+	localHistoryMap := LocalHistoryJSONFileToMap()
+	// 使用抽卡 URL 进行循环查询抽卡历史, 一但发现已经存在于历史 JSON 文件中, 则停止查询
+	FindAllWish(urlParam, localHistoryMap)
 }
 
-func FindURL(filePath string) (UrlParam, error) {
-	content, err := os.ReadFile(filePath)
+// FindURLFromLogFile 查询日志文件中的抽卡 URL
+func FindURLFromLogFile() (UrlParam, error) {
+	content, err := os.ReadFile(WishHistoryFilePath)
 	if err != nil {
 		return UrlParam{}, nil
 	}
@@ -67,6 +70,7 @@ func FindURL(filePath string) (UrlParam, error) {
 	return UrlParam{lastUrl, nMap}, nil
 }
 
+// ParseQuery 解析 URL 参数为 map
 func ParseQuery(q string) map[string]string {
 	m := map[string]string{}
 	for _, s := range strings.Split(q, "&") {
@@ -78,79 +82,79 @@ func ParseQuery(q string) map[string]string {
 	return m
 }
 
-func FindAllWish(urlParam UrlParam) {
-	m := urlParam.ParamMap
-	allList := map[string][]HKRPGWish{}
+func FindAllWish(urlParam UrlParam, localHistoryMap map[string][]HKRPGWish) {
+	paramMap := urlParam.ParamMap
+	// 循环抽卡类型
 	for k, v := range gachaTypeMap {
-		var gachaList []HKRPGWish
+		localIdList := MapToId(localHistoryMap[k])
 		fmt.Printf("开始获取[%s]\n", v)
 		page := 1
 		size := 5
-		pageStr := strconv.Itoa(page)
-		m["gacha_type"] = k
-		m["page"] = pageStr
-		m["end_id"] = "0"
-		m["size"] = strconv.Itoa(size)
+		paramMap["gacha_type"] = k
+		paramMap["page"] = strconv.Itoa(page)
+		paramMap["end_id"] = "0"
+		paramMap["size"] = strconv.Itoa(size)
 		for {
-			fetchData, _ := FetchData(urlParam.BaseUrl + "?" + MapToStr(m))
-			dataList := fetchData.Data.List
-			for _, wish := range dataList {
-				gachaList = append(gachaList, wish)
+			wishList := FetchData(urlParam.BaseUrl + "?" + MapToStr(paramMap)).Data.List
+			isContains := false
+			for _, wish := range wishList {
+				if slices.Contains(localIdList, wish.Id) {
+					isContains = true
+					continue
+				}
+				localHistoryMap[k] = append(localHistoryMap[k], wish)
 				fmt.Println(wish.String())
 			}
-			dataLen := len(dataList)
+			if isContains {
+				break
+			}
+			dataLen := len(wishList)
 			if dataLen == 0 {
 				break
 			}
-			m["end_id"] = dataList[dataLen-1].Id
+			paramMap["end_id"] = wishList[dataLen-1].Id
 			if dataLen < size {
 				break
 			}
 			page++
 		}
-		allList[k] = gachaList
 	}
-	MergeToFile(allList)
+	StoreToFile(localHistoryMap)
 }
 
-func MergeToFile(allList map[string][]HKRPGWish) {
-	file, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
+func MapToId(wishes []HKRPGWish) []string {
+	var idList []string
+	for i := range wishes {
+		idList = append(idList, wishes[i].Id)
+	}
+	return idList
+}
+
+// LocalHistoryJSONFileToMap 将本地抽卡历史 JSON 文件转为 map 对象, 如果文件不存在则创建
+func LocalHistoryJSONFileToMap() map[string][]HKRPGWish {
+	historyFile, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
 	if err != nil {
-		panic(err)
+		log.Fatalf("打开文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
 	}
 	defer func() {
-		if err := file.Close(); err != nil {
-			panic(err)
+		if err := historyFile.Close(); err != nil {
+			log.Fatalf("关闭文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
 		}
 	}()
-	all, err := io.ReadAll(file)
+	historyFileContent, err := io.ReadAll(historyFile)
 	if err != nil {
-		fmt.Printf("读取文件失败: %s\n", err.Error())
+		log.Fatalf("读取文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
 	}
-	ist := map[string][]HKRPGWish{}
-	_ = json.Unmarshal(all, &ist)
-	for s, wishes := range allList {
-		// Simple 如果不同则append
-		istWishes := ist[s]
-		idList := []string{}
-		for i := range istWishes {
-			idList = append(idList, istWishes[i].Id)
-		}
-		for w := range wishes {
-			if slices.Contains(idList, wishes[w].Id) {
-				continue
-			}
-			ist[s] = append(ist[s], wishes[w])
-		}
-	}
-	StoreToFile(ist)
+	history := map[string][]HKRPGWish{}
+	_ = json.Unmarshal(historyFileContent, &history)
+	return history
 }
 
 func StoreToFile(allList map[string][]HKRPGWish) {
 	allList = SortMapWish(allList)
 	marshal, err := json.Marshal(allList)
 	if err != nil {
-		fmt.Printf("JSON序列化失败[%s]\n", err.Error())
+		fmt.Printf("JSON序列化异常[%s]\n", err.Error())
 		return
 	}
 	WriteToFile(JSONIndent(marshal))
@@ -168,7 +172,7 @@ func JSONIndent(marshal []byte) []byte {
 func WriteToFile(marshal []byte) {
 	err := os.WriteFile(JSONFilePath, marshal, syscall.O_RDWR|syscall.O_CREAT)
 	if err != nil {
-		fmt.Printf("写入文件失败[%s]\n", err.Error())
+		fmt.Printf("写入文件异常[%s]\n", err.Error())
 	}
 }
 
@@ -191,25 +195,25 @@ func MapToStr(m map[string]string) string {
 	return strings.Join(sl, "&")
 }
 
-func FetchData(link string) (Page[HKRPGWish], error) {
-	time.Sleep(8 * time.Second)
+func FetchData(link string) Page[HKRPGWish] {
+	time.Sleep(5 * time.Second)
 	resp, err := http.Get(link)
 	if err != nil {
-		return Page[HKRPGWish]{}, err
+		log.Fatalf("HTTP请求异常,err[%s]", err.Error())
 	}
 	body := resp.Body
 	defer func() {
 		if err := body.Close(); err != nil {
-			panic(err)
+			log.Fatalf("关闭HTTP请求异常,err[%s]", err.Error())
 		}
 	}()
 	bodyByte, httpReadErr := io.ReadAll(resp.Body)
 	if httpReadErr != nil {
-		return Page[HKRPGWish]{}, httpReadErr
+		log.Fatalf("读取HTTP Body异常,err[%s]", err.Error())
 	}
 	p := Page[HKRPGWish]{}
 	_ = json.Unmarshal(bodyByte, &p)
-	return p, nil
+	return p
 }
 
 type HKRPGWish struct {
