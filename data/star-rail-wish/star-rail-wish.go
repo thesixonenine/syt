@@ -32,20 +32,15 @@ var gachaTypeMap = map[string]string{
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
 func main() {
-	urlParam, err := FindURLFromLogFile()
-	if err != nil {
-		log.Fatalf("日志文件[%s]未找到", WishHistoryFilePath)
-	}
-	localHistoryMap := LocalHistoryJSONFileToMap()
 	// 使用抽卡 URL 进行循环查询抽卡历史, 一但发现已经存在于历史 JSON 文件中, 则停止查询
-	FindAllWish(urlParam, localHistoryMap)
+	FetchWishes(FindURLFromLogFile(), LocalHistoryJSONFileToMap())
 }
 
 // FindURLFromLogFile 查询日志文件中的抽卡 URL
-func FindURLFromLogFile() (UrlParam, error) {
+func FindURLFromLogFile() UrlParam {
 	content, err := os.ReadFile(WishHistoryFilePath)
 	if err != nil {
-		return UrlParam{}, nil
+		log.Fatalf("日志文件[%s]未找到", WishHistoryFilePath)
 	}
 	lastUrl := ""
 	nMap := map[string]string{}
@@ -67,7 +62,7 @@ func FindURLFromLogFile() (UrlParam, error) {
 		}
 		lastUrl = u.Scheme + "://" + u.Host + u.Path
 	}
-	return UrlParam{lastUrl, nMap}, nil
+	return UrlParam{lastUrl, nMap}
 }
 
 // ParseQuery 解析 URL 参数为 map
@@ -82,7 +77,28 @@ func ParseQuery(q string) map[string]string {
 	return m
 }
 
-func FindAllWish(urlParam UrlParam, localHistoryMap map[string][]HKRPGWish) {
+// LocalHistoryJSONFileToMap 将本地抽卡历史 JSON 文件转为 map 对象, 如果文件不存在则创建
+func LocalHistoryJSONFileToMap() map[string][]HKRPGWish {
+	historyFile, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
+	if err != nil {
+		log.Fatalf("打开文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
+	}
+	defer func() {
+		if err := historyFile.Close(); err != nil {
+			log.Fatalf("关闭文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
+		}
+	}()
+	historyFileContent, err := io.ReadAll(historyFile)
+	if err != nil {
+		log.Fatalf("读取文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
+	}
+	history := map[string][]HKRPGWish{}
+	_ = json.Unmarshal(historyFileContent, &history)
+	return history
+}
+
+// FetchWishes 从指定 URL 及参数中拉取抽卡参数, 并追加到 Map 中
+func FetchWishes(urlParam UrlParam, localHistoryMap map[string][]HKRPGWish) {
 	paramMap := urlParam.ParamMap
 	// 循环抽卡类型
 	for k, v := range gachaTypeMap {
@@ -128,26 +144,6 @@ func MapToId(wishes []HKRPGWish) []string {
 		idList = append(idList, wishes[i].Id)
 	}
 	return idList
-}
-
-// LocalHistoryJSONFileToMap 将本地抽卡历史 JSON 文件转为 map 对象, 如果文件不存在则创建
-func LocalHistoryJSONFileToMap() map[string][]HKRPGWish {
-	historyFile, err := os.OpenFile(JSONFilePath, syscall.O_RDWR|syscall.O_CREAT, os.ModePerm)
-	if err != nil {
-		log.Fatalf("打开文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
-	}
-	defer func() {
-		if err := historyFile.Close(); err != nil {
-			log.Fatalf("关闭文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
-		}
-	}()
-	historyFileContent, err := io.ReadAll(historyFile)
-	if err != nil {
-		log.Fatalf("读取文件[%s]异常,err[%s]\n", JSONFilePath, err.Error())
-	}
-	history := map[string][]HKRPGWish{}
-	_ = json.Unmarshal(historyFileContent, &history)
-	return history
 }
 
 func StoreToFile(allList map[string][]HKRPGWish) {
