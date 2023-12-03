@@ -27,7 +27,7 @@ var gachaTypeMap = map[string]string{
 	"11": "角色活动跃迁",
 	"12": "光锥活动跃迁",
 	"1":  "常驻跃迁",
-	// "2": "新手跃迁",
+	"2":  "新手跃迁",
 }
 var absParams = []string{"authkey", "authkey_ver", "sign_type", "game_biz", "lang", "auth_appid", "size", "gacha_type", "page", "end_id"}
 
@@ -102,8 +102,12 @@ func FetchWishes(urlParam UrlParam, localHistoryMap map[string][]HKRPGWish) {
 	paramMap := urlParam.ParamMap
 	// 循环抽卡类型
 	for k, v := range gachaTypeMap {
-		localIdList := MapToId(localHistoryMap[k])
 		fmt.Printf("开始获取[%s]\n", v)
+		localIdList := MapToId(localHistoryMap[k])
+		// 如果是新手跃迁且已经抽了50抽则直接跳过
+		if k == "2" && len(localIdList) == 50 {
+			break
+		}
 		page := 1
 		size := 5
 		paramMap["gacha_type"] = k
@@ -111,7 +115,7 @@ func FetchWishes(urlParam UrlParam, localHistoryMap map[string][]HKRPGWish) {
 		paramMap["end_id"] = "0"
 		paramMap["size"] = strconv.Itoa(size)
 		for {
-			wishList := FetchData(urlParam.BaseUrl + "?" + MapToStr(paramMap)).Data.List
+			wishList := FetchData(urlParam.BaseUrl + "?" + ParamMapToStr(paramMap)).Data.List
 			isContains := false
 			for _, wish := range wishList {
 				if slices.Contains(localIdList, wish.Id) {
@@ -135,9 +139,10 @@ func FetchWishes(urlParam UrlParam, localHistoryMap map[string][]HKRPGWish) {
 			page++
 		}
 	}
-	StoreToFile(localHistoryMap)
+	StoreWishes(localHistoryMap)
 }
 
+// MapToId 将抽卡对象列表中的Id转成切片
 func MapToId(wishes []HKRPGWish) []string {
 	var idList []string
 	for i := range wishes {
@@ -146,9 +151,10 @@ func MapToId(wishes []HKRPGWish) []string {
 	return idList
 }
 
-func StoreToFile(allList map[string][]HKRPGWish) {
-	allList = SortMapWish(allList)
-	marshal, err := json.Marshal(allList)
+// StoreWishes 存储抽卡历史
+func StoreWishes(wishMap map[string][]HKRPGWish) {
+	wishMap = SortWishMap(wishMap)
+	marshal, err := json.Marshal(wishMap)
 	if err != nil {
 		fmt.Printf("JSON序列化异常[%s]\n", err.Error())
 		return
@@ -156,6 +162,7 @@ func StoreToFile(allList map[string][]HKRPGWish) {
 	WriteToFile(JSONIndent(marshal))
 }
 
+// JSONIndent 进行 JSON 格式化
 func JSONIndent(marshal []byte) []byte {
 	var out bytes.Buffer
 	err := json.Indent(&out, marshal, "", "\t")
@@ -165,6 +172,7 @@ func JSONIndent(marshal []byte) []byte {
 	return out.Bytes()
 }
 
+// WriteToFile 写入文件
 func WriteToFile(marshal []byte) {
 	err := os.WriteFile(JSONFilePath, marshal, syscall.O_RDWR|syscall.O_CREAT)
 	if err != nil {
@@ -172,7 +180,8 @@ func WriteToFile(marshal []byte) {
 	}
 }
 
-func SortMapWish(ist map[string][]HKRPGWish) map[string][]HKRPGWish {
+// SortWishMap 根据抽卡 ID (时间)进行排序
+func SortWishMap(ist map[string][]HKRPGWish) map[string][]HKRPGWish {
 	list := map[string][]HKRPGWish{}
 	for k, v := range ist {
 		sort.Slice(v, func(i, j int) bool {
@@ -183,14 +192,16 @@ func SortMapWish(ist map[string][]HKRPGWish) map[string][]HKRPGWish {
 	return list
 }
 
-func MapToStr(m map[string]string) string {
-	var sl []string
-	for k, v := range m {
-		sl = append(sl, k+"="+v)
+// ParamMapToStr 将参数 Map 使用 & 连接, 转成字符串
+func ParamMapToStr(paramMap map[string]string) string {
+	var paramStr []string
+	for k, v := range paramMap {
+		paramStr = append(paramStr, k+"="+v)
 	}
-	return strings.Join(sl, "&")
+	return strings.Join(paramStr, "&")
 }
 
+// FetchData 从指定 URL 获取抽卡历史并转成分页对象
 func FetchData(link string) Page[HKRPGWish] {
 	time.Sleep(5 * time.Second)
 	resp, err := http.Get(link)
