@@ -156,7 +156,7 @@ func StoreWishes(wishMap map[string][]HKRPGWish) {
 	wishMap = SortWishMap(wishMap)
 	marshal, err := json.Marshal(wishMap)
 	if err != nil {
-		fmt.Printf("JSON序列化异常[%s]\n", err.Error())
+		log.Fatalf("JSON序列化异常[%s]\n", err.Error())
 		return
 	}
 	WriteToFile(JSONIndent(marshal))
@@ -176,7 +176,7 @@ func JSONIndent(marshal []byte) []byte {
 func WriteToFile(marshal []byte) {
 	err := os.WriteFile(JSONFilePath, marshal, syscall.O_RDWR|syscall.O_CREAT)
 	if err != nil {
-		fmt.Printf("写入文件异常[%s]\n", err.Error())
+		log.Fatalf("写入文件异常[%s]\n", err.Error())
 	}
 }
 
