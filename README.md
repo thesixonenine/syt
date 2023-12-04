@@ -1,9 +1,5 @@
 ## TODO List
 
-### Study
-
-- [ ] 系构视频观看
-
 ### Develop
 
 - [ ] scoop添加rime输入法
