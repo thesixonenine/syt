@@ -6,7 +6,7 @@
   <div class="top">
     <div class="container">
       <div class="left">
-        <img class="logo" src="../../assets/img/ts.jpg" alt="">
+        <img class="logo" src="@/assets/img/ts.jpg" alt="">
         <p>Dashboard</p>
       </div>
       <div class="right">

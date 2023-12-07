@@ -8,10 +8,20 @@ import Top from '@/components/top/index.vue';
 import Bottom from '@/components/bottom/index.vue';
 // 引入 vue-router
 import router from '@/router/index.ts';
+// 引入 element-plus
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+// 国际化组件
+//@ts-ignore
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 const app = createApp(App);
 app.component('Top', Top);
 app.component('Bottom', Bottom);
 // 安装 vue-router
 app.use(router);
+// 安装 element-plus
+app.use(ElementPlus,{
+    locale: zhCn,
+})
 app.mount('#app');
