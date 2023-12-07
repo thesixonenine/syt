@@ -7,12 +7,9 @@ import {Search} from "@element-plus/icons-vue";
 <template>
   <div class="search">
     <el-autocomplete
-        v-model="state1"
-        :fetch-suggestions="querySearch"
         clearable
         class="inline-input w-50"
         placeholder="请输入角色名称"
-        @select="handleSelect"
     />
     <el-button type="primary" size="default" @click="" :icon="Search">搜索</el-button>
   </div>
