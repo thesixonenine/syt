@@ -106,7 +106,7 @@ func FetchWishes(urlParam UrlParam, localHistoryMap map[string][]HKRPGWish) {
 		localIdList := MapToId(localHistoryMap[k])
 		// 如果是新手跃迁且已经抽了50抽则直接跳过
 		if k == "2" && len(localIdList) == 50 {
-			break
+			continue
 		}
 		page := 1
 		size := 5
