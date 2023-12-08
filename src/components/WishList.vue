@@ -57,20 +57,20 @@ onMounted(() => {
   <div class="wishes">
     <table>
       <thead>
-        <tr>
-          <th>时间</th>
-          <th>名称</th>
-          <th>类型</th>
-        </tr>
+      <tr>
+        <th>时间</th>
+        <th>名称</th>
+        <th>类型</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="wishItem in wishList">
-          <td id="wishTime">{{ wishItem.time }}</td>
-          <td v-if="wishItem.rank_type === '3'" id="wishName">{{ wishItem.name }}</td>
-          <td v-if="wishItem.rank_type === '4'" style="color: blue" id="wishName">{{ wishItem.name }}</td>
-          <td v-if="wishItem.rank_type === '5'" style="color: red" id="wishName">{{ wishItem.name }}</td>
-          <td id="wishStar">{{ wishItem.item_type }}</td>
-        </tr>
+      <tr v-for="wishItem in wishList">
+        <td id="wishTime">{{ wishItem.time }}</td>
+        <td v-if="wishItem.rank_type === '3'" id="wishName">{{ wishItem.name }}</td>
+        <td v-if="wishItem.rank_type === '4'" style="color: blue" id="wishName">{{ wishItem.name }}</td>
+        <td v-if="wishItem.rank_type === '5'" style="color: red" id="wishName">{{ wishItem.name }}</td>
+        <td id="wishStar">{{ wishItem.item_type }}</td>
+      </tr>
       </tbody>
     </table>
   </div>
@@ -84,15 +84,18 @@ onMounted(() => {
   padding: 10px;
   width: 100%;
 }
+
 table {
   background-color: wheat;
   border: solid 1px;
 }
+
 th {
   padding: 5px 0;
   border-bottom: solid 1px;
   margin-bottom: 10px;
 }
+
 td {
   text-align: center;
 }

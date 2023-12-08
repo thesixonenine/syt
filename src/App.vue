@@ -1,6 +1,11 @@
 <script setup lang="ts">
 // import HelloWorld from './components/HelloWorld.vue'
 // import WishList from '@/components/WishList.vue'
+import {onMounted} from "vue";
+
+onMounted(() => {
+  console.log('App.vue Mounted');
+});
 </script>
 
 <template>
@@ -12,7 +17,6 @@
     <Bottom/>
   </div>
   <!-- <HelloWorld msg="Dashboard" /> -->
-
 </template>
 
 <style scoped lang="scss">
@@ -20,7 +24,8 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  .content{
+
+  .content {
     margin-top: 70px;
     width: 1200px;
     min-height: 700px;

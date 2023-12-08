@@ -130,6 +130,7 @@ ul {
 blockquote,
 q {
   quotes: none;
+
   &:before,
   &:after {
     content: '';
@@ -146,9 +147,11 @@ sup {
 
   vertical-align: baseline;
 }
+
 sup {
   top: -.5em;
 }
+
 sub {
   bottom: -.25em;
 }
@@ -177,6 +180,7 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
 }
+
 select::-ms-expand {
   display: none;
 }

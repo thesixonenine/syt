@@ -42,7 +42,8 @@
           color: #55a6fe;
         }
       }
-      li:hover{
+
+      li:hover {
         color: #55a6fe;
         cursor: pointer;
       }

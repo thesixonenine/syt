@@ -21,7 +21,7 @@ app.component('Bottom', Bottom);
 // 安装 vue-router
 app.use(router);
 // 安装 element-plus
-app.use(ElementPlus,{
+app.use(ElementPlus, {
     locale: zhCn,
 })
 app.mount('#app');

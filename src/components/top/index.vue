@@ -39,22 +39,26 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
       .logo {
         width: 50px;
         height: 50px;
         margin-right: 10px;
       }
-      p{
+
+      p {
         font-size: 20px;
         color: #55a6fe;
       }
     }
+
     .right {
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 14px;
       color: #bbb;
+
       .github {
         margin-right: 10px;
       }

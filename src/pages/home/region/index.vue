@@ -41,6 +41,7 @@
     .star {
       display: flex;
       flex-wrap: wrap;
+
       li {
         margin-right: 10px;
         margin-bottom: 10px;
@@ -49,7 +50,8 @@
           color: #55a6fe;
         }
       }
-      li:hover{
+
+      li:hover {
         color: #55a6fe;
         cursor: pointer;
       }
