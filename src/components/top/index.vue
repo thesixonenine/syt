@@ -45,6 +45,7 @@ const home = () => {
       display: flex;
       justify-content: center;
       align-items: center;
+      cursor: pointer;
 
       .logo {
         width: 50px;

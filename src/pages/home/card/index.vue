@@ -10,7 +10,7 @@ const selected = (t: any) => {
   console.log(t.value);
   console.log('props:', props);
   console.log('itemInfo:', props.itemInfo);
-  $router.push({path: '/hospital'});
+  $router.push({path: '/hospital/reg'});
 };
 </script>
 

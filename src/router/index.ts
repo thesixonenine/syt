@@ -7,19 +7,41 @@ export default createRouter({
     routes: [
         {
             path: '/home',
-            component: () => import('@/pages/home/index.vue')
+            component: () => import('@/pages/home/index.vue'),
         },
         {
             path: '/hospital',
-            component: () => import('@/pages/hospital/index.vue')
+            component: () => import('@/pages/hospital/index.vue'),
+            children: [
+                {
+                    path: 'reg',
+                    component: () => import('@/pages/hospital/reg/index.vue'),
+                },
+                {
+                    path: 'detail',
+                    component: () => import('@/pages/hospital/detail/index.vue'),
+                },
+                {
+                    path: 'notify',
+                    component: () => import('@/pages/hospital/notify/index.vue'),
+                },
+                {
+                    path: 'stop',
+                    component: () => import('@/pages/hospital/stop/index.vue'),
+                },
+                {
+                    path: 'cancel',
+                    component: () => import('@/pages/hospital/cancel/index.vue'),
+                }
+            ],
         },
         {
             path: '/sr',
-            component: () => import('@/pages/sr/index.vue')
+            component: () => import('@/pages/sr/index.vue'),
         },
         {
             path: '/',
-            redirect: '/home'
+            redirect: '/home',
         }
     ],
     // 控制滚动条的位置
