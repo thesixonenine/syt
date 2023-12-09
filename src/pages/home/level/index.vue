@@ -1,5 +1,27 @@
 <script setup lang="ts">
-
+import {onMounted, ref} from "vue";
+import {cardLevelReq} from "@/api/home.ts";
+import {HospitalDict} from "@/api/home_type.ts";
+import type {Response} from "@/api/common_type.ts";
+// 等级数据
+let levelList = ref<HospitalDict[]>([]);
+// 高亮控制
+let activated = ref<string>('');
+onMounted(() => {
+  levelData();
+});
+// 获取医院的等级数据
+const levelData = async () => {
+  let resp: Response<HospitalDict[]> = await cardLevelReq('Hostype');
+  console.log("cardLevel:\n", resp);
+  if (resp.code == 200) {
+    levelList.value = resp.data;
+  }
+};
+// 点击事件
+const changeLevel = (levelCode: string) => {
+  activated.value = levelCode;
+};
 </script>
 
 <template>
@@ -8,9 +30,12 @@
     <div class="content">
       <div class="left">星级:</div>
       <ul class="star">
-        <li class="active">全部</li>
-        <li>四星</li>
-        <li>五星</li>
+        <li :class="{active:activated==''}" @click="changeLevel('')">全部</li>
+        <li v-for="level in levelList"
+            :key="level.value"
+            @click="changeLevel(level.value)"
+            :class="{active:activated==level.value}">{{ level.name }}
+        </li>
       </ul>
     </div>
   </div>
@@ -38,7 +63,7 @@
       li {
         margin-right: 10px;
 
-        .active {
+        &.active {
           color: #55a6fe;
         }
       }

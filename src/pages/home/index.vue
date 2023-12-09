@@ -13,11 +13,13 @@ import Card from './card/index.vue';
 // 引入组合式API函数
 import {onMounted, ref} from 'vue';
 import {cardListReq} from '@/api/home';
+import type {Content, Hospital} from "@/api/home_type.ts";
+import type {Response} from "@/api/common_type.ts";
 
 let pageNo = ref<number>(1);
 let pageSize = ref<number>(5);
 
-let hasCardArr = ref([]);
+let hasCardArr = ref<Content[]>([]);
 let total = ref<number>(0);
 
 onMounted(() => {
@@ -25,7 +27,7 @@ onMounted(() => {
 });
 
 const getCardList = async () => {
-  let result: any = await cardListReq(pageNo.value, pageSize.value);
+  let result: Response<Hospital> = await cardListReq(pageNo.value, pageSize.value);
   console.log('getCardList:\n', result);
   if (result.code == 200) {
     hasCardArr.value = result.data.content;
