@@ -1,10 +1,21 @@
 <script setup lang="ts">
+defineOptions({name: 'Card'});
+import {useRouter} from "vue-router";
 // 接受传入的props itemInfo
-defineProps(['itemInfo']);
+let props = defineProps(['itemInfo']);
+// 路由对象
+let $router = useRouter();
+// 点击卡片
+const selected = (t: any) => {
+  console.log(t.value);
+  console.log('props:', props);
+  console.log('itemInfo:', props.itemInfo);
+  $router.push({path: '/hospital'});
+};
 </script>
 
 <template>
-  <el-card class="box-card" shadow="hover">
+  <el-card class="box-card" shadow="hover" @click="selected">
     <div class="content">
       <div class="left">
         <div class="name">{{ itemInfo.hosname }}</div>

@@ -10,6 +10,10 @@ export default createRouter({
             component: () => import('@/pages/home/index.vue')
         },
         {
+            path: '/hospital',
+            component: () => import('@/pages/hospital/index.vue')
+        },
+        {
             path: '/sr',
             component: () => import('@/pages/sr/index.vue')
         },

@@ -1,11 +1,17 @@
 <script setup lang="ts">
+defineOptions(['Top'])
+import {useRouter} from "vue-router";
 
+let $router = useRouter();
+const home = () => {
+  $router.push({path: '/home'});
+};
 </script>
 
 <template>
   <div class="top">
     <div class="container">
-      <div class="left">
+      <div class="left" @click="home">
         <img class="logo" src="@/assets/img/ts.jpg" alt="">
         <p>Dashboard</p>
       </div>

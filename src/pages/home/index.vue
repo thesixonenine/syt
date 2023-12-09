@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({name: 'Home'});
 // 引入轮播图
 import Carousel from './carousel/index.vue';
 // 引入搜索
@@ -9,7 +10,8 @@ import Level from './level/index.vue';
 import Region from './region/index.vue';
 // 引入角色卡片
 import Card from './card/index.vue';
-
+// 引入右侧静态
+import Tip from './tip/index.vue';
 // 引入组合式API函数
 import {onMounted, ref} from 'vue';
 import {cardListReq} from '@/api/home';
@@ -91,7 +93,9 @@ const getRegion = (region: string) => {
             @size-change="sizeChange"
         />
       </el-col>
-      <el-col :span="4">123</el-col>
+      <el-col :span="4">
+        <Tip/>
+      </el-col>
     </el-row>
   </div>
 </template>

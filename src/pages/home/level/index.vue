@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({name: 'Level'});
 import {onMounted, ref} from "vue";
 import {cardLevelReq} from "@/api/home.ts";
 import {HospitalDict} from "@/api/home_type.ts";
