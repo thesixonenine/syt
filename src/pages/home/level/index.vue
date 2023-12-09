@@ -20,8 +20,13 @@ const levelData = async () => {
 };
 // 点击事件
 const changeLevel = (levelCode: string) => {
+  // 改变选中状态
   activated.value = levelCode;
+  // 触发自定义事件, 将level的参数传递给父组件
+  $emit('getLevel', levelCode);
 };
+// 绑定父组件中的自定义事件
+let $emit = defineEmits(['getLevel']);
 </script>
 
 <template>

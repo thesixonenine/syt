@@ -20,8 +20,11 @@ const regionData = async () => {
 };
 // 点击事件
 const changeRegion = (region: string) => {
+  // 改变选中状态
   activated.value = region;
+  $emit('getRegion', region);
 };
+let $emit = defineEmits(['getRegion']);
 </script>
 
 <template>

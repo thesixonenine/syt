@@ -21,13 +21,15 @@ let pageSize = ref<number>(5);
 
 let hasCardArr = ref<Content[]>([]);
 let total = ref<number>(0);
-
+// 子组件的等级数据
+let hostype = ref<string>('');
+let districtCode = ref<string>('');
 onMounted(() => {
   getCardList()
 });
 
 const getCardList = async () => {
-  let result: Response<Hospital> = await cardListReq(pageNo.value, pageSize.value);
+  let result: Response<Hospital> = await cardListReq(pageNo.value, pageSize.value, hostype.value, districtCode.value);
   console.log('getCardList:\n', result);
   if (result.code == 200) {
     hasCardArr.value = result.data.content;
@@ -45,6 +47,17 @@ const sizeChange = () => {
   pageNo.value = 1;
   getCardList();
 };
+// 子组件自定义事件, 获取子组件给当前父组件传递的数据
+const getLevel = (levelCode: string) => {
+  console.log('已接收到子组件传递的等级数据', levelCode);
+  hostype.value = levelCode;
+  getCardList();
+};
+const getRegion = (region: string) => {
+  console.log('已接收到子组件传递的地区数据', region);
+  districtCode.value = region;
+  getCardList();
+};
 </script>
 
 <template>
@@ -56,14 +69,15 @@ const sizeChange = () => {
     <!-- 内容展示 -->
     <el-row :gutter="20">
       <el-col :span="20">
-        <!-- 星级 -->
-        <Level/>
+        <!-- 星级, 需要绑定自定义事件, 以便接收该子组件上传的数据 -->
+        <Level @getLevel="getLevel"/>
         <!-- 地区 -->
-        <Region/>
+        <Region @getRegion="getRegion"/>
         <!-- 角色 -->
-        <div class="cardList">
+        <div class="cardList" v-if="hasCardArr.length>0">
           <Card class="card" v-for="(item,index) in hasCardArr" :key="index" :itemInfo="item"/>
         </div>
+        <el-empty v-if="hasCardArr.length==0" description="这里啥也没"/>
         <!-- 分页器 -->
         <el-pagination
             v-model:current-page="pageNo"
