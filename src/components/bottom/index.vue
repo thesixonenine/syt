@@ -6,7 +6,7 @@
   <div class="bottom">
     <div class="content">
       <div class="left">
-        <a href="https://www.bilibili.com/video/BV1CN41167AC?p=12" target="_blank">参考视频</a>
+        <a href="https://www.bilibili.com/video/BV1CN41167AC?p=14" target="_blank">参考视频</a>
       </div>
       <div class="right">
         <span>我的Blog</span>
