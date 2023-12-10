@@ -25,7 +25,7 @@ const fetchSuggest = async (keyword: string, cb: any) => {
 // 点击推荐项
 const selected = (t: any) => {
   console.log(t.value);
-  $router.push({path: '/hospital/reg'});
+  $router.push({path: '/hospital/reg', query: {hoscode: t.hoscode}});
 };
 </script>
 

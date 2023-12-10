@@ -1,17 +1,24 @@
 <script setup lang="ts">
-import {useRoute, useRouter} from "vue-router";
-
 defineOptions({name: 'Hospital'});
+import {Response} from "@/api/common_type.ts";
+import {useRoute, useRouter} from "vue-router";
+import {onMounted} from "vue";
 // 引入图标
 import {Document, Menu as IconMenu, Search, InfoFilled, HomeFilled, Setting} from "@element-plus/icons-vue";
+import {cardDetailReq} from "@/api/hospital.ts";
+import {HospitalDetail} from "@/api/hospital_type.ts";
+import useDetailStore from "@/store/modules/hospital.ts";
 
+let detailStore = useDetailStore();
 let $router = useRouter();
 const changeActive = (p: string) => {
   $router.push({path: p});
 };
 // 获取当前 URL 上的路由信息
 let $route = useRoute();
-
+onMounted(() => {
+  detailStore.getHospitalDetail($route.query.hoscode as string);
+});
 </script>
 
 <template>
