@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({name: 'HospitalDetail'});
 import useDetailStore from "@/store/modules/hospital.ts";
 
 let detailStore = useDetailStore();

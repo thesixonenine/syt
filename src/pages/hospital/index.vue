@@ -1,12 +1,9 @@
 <script setup lang="ts">
 defineOptions({name: 'Hospital'});
-import {Response} from "@/api/common_type.ts";
 import {useRoute, useRouter} from "vue-router";
 import {onMounted} from "vue";
 // 引入图标
 import {Document, Menu as IconMenu, Search, InfoFilled, HomeFilled, Setting} from "@element-plus/icons-vue";
-import {cardDetailReq} from "@/api/hospital.ts";
-import {HospitalDetail} from "@/api/hospital_type.ts";
 import useDetailStore from "@/store/modules/hospital.ts";
 
 let detailStore = useDetailStore();
