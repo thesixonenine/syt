@@ -1,5 +1,6 @@
-import {HospitalDetail} from "@/api/hospital_type.ts";
+import {Department, HospitalDetail} from "@/api/hospital_type.ts";
 
 export interface HospitalDetailState {
-    hospitalDetail:HospitalDetail
+    hospitalDetail: HospitalDetail,
+    departments: Department[]
 }

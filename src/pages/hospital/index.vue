@@ -14,7 +14,10 @@ const changeActive = (p: string) => {
 // 获取当前 URL 上的路由信息
 let $route = useRoute();
 onMounted(() => {
+  // 获取医院详情
   detailStore.getHospitalDetail($route.query.hoscode as string);
+  // 获取医院科室
+  detailStore.getDepartment($route.query.hoscode as string);
 });
 </script>
 

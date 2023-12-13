@@ -36,3 +36,9 @@ export interface HospitalDetail {
     bookingRule: BookingRule;
     hospital: Hospital;
 }
+
+export interface Department {
+    "depcode": string,
+    "depname": string,
+    "children"?: Department[],
+}
