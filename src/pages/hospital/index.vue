@@ -9,7 +9,7 @@ import useDetailStore from "@/store/modules/hospital.ts";
 let detailStore = useDetailStore();
 let $router = useRouter();
 const changeActive = (p: string) => {
-  $router.push({path: p});
+  $router.push({path: p,query:{hoscode:$route.query.hoscode as string}});
 };
 // 获取当前 URL 上的路由信息
 let $route = useRoute();
