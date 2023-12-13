@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineOptions(['Top'])
+defineOptions({name: 'Top'})
 import {useRouter} from "vue-router";
 
 let $router = useRouter();
