@@ -1,11 +1,17 @@
 <script setup lang="ts">
 defineOptions({name: 'Top'})
+
+import userStore from "@/store/modules/user.ts";
 import {useRouter} from "vue-router";
 
 let $router = useRouter();
 const home = () => {
   $router.push({path: '/home'});
 };
+let user = userStore();
+const login = () => {
+  user.visible = true;
+}
 </script>
 
 <template>
@@ -17,7 +23,7 @@ const home = () => {
       </div>
       <div class="right">
         <p class="github">GitHub</p>
-        <p class="blog">Blog</p>
+        <p class="login" @click="login">登录/注册</p>
       </div>
     </div>
 

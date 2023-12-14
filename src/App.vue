@@ -15,6 +15,7 @@ onMounted(() => {
       <router-view/>
     </div>
     <Bottom/>
+    <Login/>
   </div>
   <!-- <HelloWorld msg="Dashboard" /> -->
 </template>

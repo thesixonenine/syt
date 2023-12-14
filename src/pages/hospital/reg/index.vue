@@ -2,6 +2,8 @@
 defineOptions({name: 'HospitalDetail'});
 
 import {ref} from "vue";
+
+import userStore from "@/store/modules/user.ts";
 import useDetailStore from "@/store/modules/hospital.ts";
 
 let detailStore = useDetailStore();
@@ -12,6 +14,10 @@ const changeIdx = (index: number) => {
   allCur[index].scrollIntoView({
     behavior: 'smooth'
   });
+};
+let user = userStore();
+const login = () => {
+  user.visible = true;
 };
 </script>
 
@@ -60,9 +66,9 @@ const changeIdx = (index: number) => {
              :key="dep.depcode">
           <h1 class="cur">{{ dep.depname }}</h1>
           <ul>
-            <li v-for="(item) in dep.children"
+            <li @click="login" v-for="(item) in dep.children"
                 :key="item.depcode">
-              {{item.depname}}
+              {{ item.depname }}
             </li>
           </ul>
         </div>
@@ -162,17 +168,21 @@ const changeIdx = (index: number) => {
       margin-left: 20px;
       height: 100%;
       overflow: auto;
-      &::-webkit-scrollbar{
+
+      &::-webkit-scrollbar {
         display: none;
       }
-      h1{
+
+      h1 {
         color: #7f7f7f;
         background-color: rgb(248, 248, 248);
       }
-      ul{
+
+      ul {
         display: flex;
         flex-wrap: wrap;
-        li{
+
+        li {
           color: #7f7f7f;
           width: 33%;
           line-height: 30px;

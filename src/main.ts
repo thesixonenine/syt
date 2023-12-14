@@ -6,6 +6,8 @@ import App from '@/App.vue';
 // 引入顶部和底部的全局组件
 import Top from '@/components/top/index.vue';
 import Bottom from '@/components/bottom/index.vue';
+// 引入登录组件
+import Login from '@/components/login/index.vue';
 // 引入 vue-router
 import router from '@/router/index.ts';
 // 引入 element-plus
@@ -20,6 +22,7 @@ import pinia from '@/store';
 const app = createApp(App);
 app.component('Top', Top);
 app.component('Bottom', Bottom);
+app.component('Login', Login);
 // 安装 vue-router
 app.use(router);
 // 安装 element-plus
