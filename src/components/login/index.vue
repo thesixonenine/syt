@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineOptions({name: "Login"});
 
-import {ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import userStore from "@/store/modules/user.ts";
 import {User, Lock} from "@element-plus/icons-vue";
 
@@ -10,6 +10,23 @@ let visibleNum = ref<number>(0);
 const changeVisible = () => {
   visibleNum.value = 1;
 };
+const getCode = async () => {
+  try {
+    await user.getCode(loginParams.mobile);
+    loginParams.code = user.code;
+  } catch (e) {
+  }
+};
+// 表单数据
+let loginParams = reactive({
+  mobile: '',
+  code: '',
+});
+// 计算表单内容
+let isMobile = computed(() => {
+  const reg = /^1\d{10}$/;
+  return reg.test(loginParams.mobile);
+});
 </script>
 
 <template>
@@ -21,13 +38,13 @@ const changeVisible = () => {
             <div v-show="visibleNum==0">
               <el-form>
                 <el-form-item>
-                  <el-input placeholder="手机号码" :prefix-icon="User"/>
+                  <el-input v-model="loginParams.mobile" placeholder="手机号码" :prefix-icon="User"/>
                 </el-form-item>
                 <el-form-item>
-                  <el-input placeholder="验证码" :prefix-icon="Lock"/>
+                  <el-input v-model="loginParams.code" :disabled="!isMobile" placeholder="验证码" :prefix-icon="Lock"/>
                 </el-form-item>
                 <el-form-item>
-                  <el-button>获取验证码</el-button>
+                  <el-button :disabled="!isMobile" @click="getCode">获取验证码</el-button>
                 </el-form-item>
               </el-form>
               <el-button style="width: 100%;" type="primary" size="default">用户登录</el-button>
@@ -103,7 +120,8 @@ const changeVisible = () => {
         margin: 10px 0;
         cursor: pointer;
       }
-      svg{
+
+      svg {
         cursor: pointer;
       }
     }
