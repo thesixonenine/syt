@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import {ElMessage} from "element-plus";
-
 defineOptions({name: "Login"});
 
+import {ElMessage} from "element-plus";
 import {computed, reactive, ref} from "vue";
 import userStore from "@/store/modules/user.ts";
 import {User, Lock} from "@element-plus/icons-vue";
@@ -14,7 +13,7 @@ const changeVisible = () => {
   visibleNum.value = 1;
 };
 const getCode = async () => {
-  if (!isMobile || countDownFlag) {
+  if (!isMobile || countDownFlag.value) {
     return;
   }
   // 开启倒计时
@@ -44,6 +43,19 @@ let countDownFlag = ref<boolean>(false);
 const getFromSon = (getFromSonEmit: boolean) => {
   countDownFlag.value = getFromSonEmit;
 };
+// 点击登录
+const userLogin = async () => {
+  try {
+    await user.login({"phone": loginParams.mobile, "code": loginParams.code});
+    // 关闭对话框
+    user.visible = false;
+  } catch (e) {
+    ElMessage({
+      type: "error",
+      message: (e as Error).message,
+    });
+  }
+};
 </script>
 
 <template>
@@ -68,7 +80,10 @@ const getFromSon = (getFromSonEmit: boolean) => {
                   </el-button>
                 </el-form-item>
               </el-form>
-              <el-button style="width: 100%;" type="primary" size="default">用户登录</el-button>
+              <el-button style="width: 100%;" type="primary" size="default"
+                         :disabled="!isMobile ||loginParams.code.length!=6"
+                         @click="userLogin">用户登录
+              </el-button>
               <div class="bottom" @click="changeVisible">
                 <p>微信扫码登录</p>
                 <svg style="width: 32px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"

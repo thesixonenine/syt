@@ -3,7 +3,7 @@ defineOptions({name: 'Top'})
 
 import userStore from "@/store/modules/user.ts";
 import {useRouter} from "vue-router";
-
+import { ArrowDown } from '@element-plus/icons-vue'
 let $router = useRouter();
 const home = () => {
   $router.push({path: '/home'});
@@ -23,7 +23,23 @@ const login = () => {
       </div>
       <div class="right">
         <p class="github">GitHub</p>
-        <p class="login" @click="login">登录/注册</p>
+        <p class="login" v-if="!user.info.name" @click="login">登录/注册</p>
+        <el-dropdown v-else>
+          <span class="el-dropdown-link">
+            {{user.info.name}}
+            <el-icon class="el-icon--right">
+              <arrow-down/>
+            </el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>实名认证</el-dropdown-item>
+              <el-dropdown-item>挂号订单</el-dropdown-item>
+              <el-dropdown-item>就诊人管理</el-dropdown-item>
+              <el-dropdown-item>退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </div>
 
