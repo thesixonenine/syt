@@ -4,6 +4,7 @@ defineOptions({name: "Login"});
 import {computed, reactive, ref} from "vue";
 import userStore from "@/store/modules/user.ts";
 import {User, Lock} from "@element-plus/icons-vue";
+import CountDown from "@/components/countdown/index.vue";
 
 let user = userStore();
 let visibleNum = ref<number>(0);
@@ -11,6 +12,8 @@ const changeVisible = () => {
   visibleNum.value = 1;
 };
 const getCode = async () => {
+  // 开启倒计时
+  countDownFlag.value = true;
   try {
     await user.getCode(loginParams.mobile);
     loginParams.code = user.code;
@@ -27,6 +30,11 @@ let isMobile = computed(() => {
   const reg = /^1\d{10}$/;
   return reg.test(loginParams.mobile);
 });
+// 控制倒计时组件的显示
+let countDownFlag = ref<boolean>(false);
+const getFromSon=(getFromSonEmit:boolean)=>{
+  countDownFlag.value = getFromSonEmit;
+};
 </script>
 
 <template>
@@ -44,7 +52,11 @@ let isMobile = computed(() => {
                   <el-input v-model="loginParams.code" :disabled="!isMobile" placeholder="验证码" :prefix-icon="Lock"/>
                 </el-form-item>
                 <el-form-item>
-                  <el-button :disabled="!isMobile" @click="getCode">获取验证码</el-button>
+                  <el-button :disabled="!isMobile || countDownFlag">
+                    <CountDown v-if="countDownFlag"
+                    :sendToSon="countDownFlag" @getFromSonEmit="getFromSon"/>
+                    <span @click="getCode" v-else>获取验证码</span>
+                  </el-button>
                 </el-form-item>
               </el-form>
               <el-button style="width: 100%;" type="primary" size="default">用户登录</el-button>
