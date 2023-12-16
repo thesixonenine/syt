@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {ElMessage} from "element-plus";
+
 defineOptions({name: "Login"});
 
 import {computed, reactive, ref} from "vue";
@@ -12,12 +14,19 @@ const changeVisible = () => {
   visibleNum.value = 1;
 };
 const getCode = async () => {
+  if (!isMobile || countDownFlag) {
+    return;
+  }
   // 开启倒计时
   countDownFlag.value = true;
   try {
     await user.getCode(loginParams.mobile);
     loginParams.code = user.code;
   } catch (e) {
+    ElMessage({
+      type: "error",
+      message: (e as Error).message
+    });
   }
 };
 // 表单数据
@@ -32,7 +41,7 @@ let isMobile = computed(() => {
 });
 // 控制倒计时组件的显示
 let countDownFlag = ref<boolean>(false);
-const getFromSon=(getFromSonEmit:boolean)=>{
+const getFromSon = (getFromSonEmit: boolean) => {
   countDownFlag.value = getFromSonEmit;
 };
 </script>
@@ -54,7 +63,7 @@ const getFromSon=(getFromSonEmit:boolean)=>{
                 <el-form-item>
                   <el-button :disabled="!isMobile || countDownFlag">
                     <CountDown v-if="countDownFlag"
-                    :sendToSon="countDownFlag" @getFromSonEmit="getFromSon"/>
+                               :sendToSon="countDownFlag" @getFromSonEmit="getFromSon"/>
                     <span @click="getCode" v-else>获取验证码</span>
                   </el-button>
                 </el-form-item>
