@@ -1,12 +1,14 @@
 <script setup lang="ts">
 defineOptions({name: "Login"});
 
-import {ElMessage} from "element-plus";
+import {ElMessage, FormInstance, FormRules} from "element-plus";
 import {computed, reactive, ref} from "vue";
 import userStore from "@/store/modules/user.ts";
 import {User, Lock} from "@element-plus/icons-vue";
 import CountDown from "@/components/countdown/index.vue";
 
+const mobileReg = /^1\d{10}$/;
+const codeReg = /^\d{6}$/;
 let user = userStore();
 let visibleNum = ref<number>(0);
 const changeVisible = () => {
@@ -33,10 +35,27 @@ let loginParams = reactive({
   mobile: '',
   code: '',
 });
+const ruleFormRef = ref<FormInstance>();
+const codeValidator = (rule: any, value: any, callback: any) => {
+  if (codeReg.test(value)) {
+    callback();
+  } else {
+    callback(new Error("请输入正确的手机号码"));
+  }
+};
+// 表单校验
+const rules = reactive<FormRules>({
+  mobile: [
+    {required: true, message: '手机号码错误', trigger: 'blur'},
+    {min: 11, max: 11, message: '手机号码必须是11位', trigger: 'blur'},
+  ],
+  code: [
+    {validator: codeValidator, trigger: 'blur'}
+  ],
+});
 // 计算表单内容
 let isMobile = computed(() => {
-  const reg = /^1\d{10}$/;
-  return reg.test(loginParams.mobile);
+  return mobileReg.test(loginParams.mobile);
 });
 // 控制倒计时组件的显示
 let countDownFlag = ref<boolean>(false);
@@ -45,6 +64,8 @@ const getFromSon = (getFromSonEmit: boolean) => {
 };
 // 点击登录
 const userLogin = async () => {
+  // 进行表单校验
+  await ruleFormRef.value?.validate();
   try {
     await user.login({"phone": loginParams.mobile, "code": loginParams.code});
     // 关闭对话框
@@ -56,20 +77,28 @@ const userLogin = async () => {
     });
   }
 };
+// dialog 关闭事件
+const closeDialog = () => {
+  Object.assign(loginParams, {mobile: '', code: ''});
+  ruleFormRef.value?.resetFields();
+};
+const closeDialogWindow=()=>{
+  user.visible = false;
+};
 </script>
 
 <template>
   <div class="login">
-    <el-dialog v-model="user.visible" title="用户登录">
+    <el-dialog v-model="user.visible" title="用户登录" ref="dialog" @close="closeDialog">
       <el-row>
         <el-col :span="12">
           <div class="loginForm">
             <div v-show="visibleNum==0">
-              <el-form>
-                <el-form-item>
+              <el-form :model="loginParams" :rules="rules" ref="ruleFormRef">
+                <el-form-item prop="mobile">
                   <el-input v-model="loginParams.mobile" placeholder="手机号码" :prefix-icon="User"/>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="code">
                   <el-input v-model="loginParams.code" :disabled="!isMobile" placeholder="验证码" :prefix-icon="Lock"/>
                 </el-form-item>
                 <el-form-item>
@@ -129,7 +158,7 @@ const userLogin = async () => {
         </el-col>
       </el-row>
       <template #footer>
-        <el-button type="primary" size="default">关闭窗口</el-button>
+        <el-button type="primary" size="default" @click="closeDialogWindow">关闭窗口</el-button>
       </template>
     </el-dialog>
   </div>
