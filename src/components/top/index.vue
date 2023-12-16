@@ -11,7 +11,11 @@ const home = () => {
 let user = userStore();
 const login = () => {
   user.visible = true;
-}
+};
+const logout = ()=>{
+  user.logout();
+  home();
+};
 </script>
 
 <template>
@@ -36,7 +40,7 @@ const login = () => {
               <el-dropdown-item>实名认证</el-dropdown-item>
               <el-dropdown-item>挂号订单</el-dropdown-item>
               <el-dropdown-item>就诊人管理</el-dropdown-item>
-              <el-dropdown-item>退出登录</el-dropdown-item>
+              <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

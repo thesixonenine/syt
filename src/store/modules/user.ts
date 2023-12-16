@@ -36,6 +36,10 @@ const userStore = defineStore('User', {
                 return Promise.reject(new Error(result.message));
             }
         },
+        logout() {
+            this.info = {} as LoginResp;
+            localStorage.removeItem("UserInfo");
+        },
     },
     getters: {},
 });
