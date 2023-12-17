@@ -32,7 +32,11 @@ export default createRouter({
                 {
                     path: 'cancel',
                     component: () => import('@/pages/hospital/cancel/index.vue'),
-                }
+                },
+                {
+                    path: 'reg_step1',
+                    component: () => import('@/pages/hospital/reg/step1.vue'),
+                },
             ],
         },
         {

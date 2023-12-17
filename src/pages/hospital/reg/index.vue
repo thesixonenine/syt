@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import {useRoute, useRouter} from "vue-router";
+
 defineOptions({name: 'HospitalDetail'});
 
 import {ref} from "vue";
 
-import userStore from "@/store/modules/user.ts";
+// import userStore from "@/store/modules/user.ts";
 import useDetailStore from "@/store/modules/hospital.ts";
 
 let detailStore = useDetailStore();
@@ -15,9 +17,13 @@ const changeIdx = (index: number) => {
     behavior: 'smooth'
   });
 };
-let user = userStore();
-const login = () => {
-  user.visible = true;
+let $route = useRoute();
+let $router = useRouter();
+// let user = userStore();
+const login = (item: any) => {
+  // user.visible = true;
+  console.log(item);
+  $router.push({path: '/hospital/reg_step1', query: {hoscode: $route.query.hoscode, depcode: item.depcode}});
 };
 </script>
 
@@ -66,7 +72,7 @@ const login = () => {
              :key="dep.depcode">
           <h1 class="cur">{{ dep.depname }}</h1>
           <ul>
-            <li @click="login" v-for="(item) in dep.children"
+            <li @click="login(item)" v-for="(item) in dep.children"
                 :key="item.depcode">
               {{ item.depname }}
             </li>
