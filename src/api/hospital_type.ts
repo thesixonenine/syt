@@ -42,3 +42,28 @@ export interface Department {
     "depname": string,
     "children"?: Department[],
 }
+
+export interface BookingSchedule {
+    workDate: string,
+    workDateMd: string,
+    dayOfWeek: string,
+    docCount: number,
+    reservedNumber: number,
+    availableNumber: number,
+    status: number,
+}
+
+export interface BookingBase {
+    workDateString: string,
+    releaseTime: string,
+    bigname: string,
+    stopTime: string,
+    depname: string,
+    hosname: string,
+}
+
+export interface Booking {
+    total: number,
+    bookingScheduleList: BookingSchedule[],
+    baseMap: BookingBase,
+}

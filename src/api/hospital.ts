@@ -1,10 +1,11 @@
 import request from "@/http/request";
 import {Response} from "@/api/common_type.ts";
-import {Department, HospitalDetail} from "@/api/hospital_type.ts";
+import {Booking, Department, HospitalDetail} from "@/api/hospital_type.ts";
 
 enum Api {
     hospital_detail = '/hosp/hospital/{hoscode}',
     hospital_depart = '/hosp/hospital/department/{hoscode}',
+    hospital_depart_booking = '/hosp/hospital/auth/getBookingScheduleRule/{page}/{limit}/{hoscode}/{depcode}',
 }
 
 export const cardDetailReq = (hoscode: string) => {
@@ -12,4 +13,11 @@ export const cardDetailReq = (hoscode: string) => {
 }
 export const cardDepartReq = (hoscode: string) => {
     return request.get<any, Response<Department[]>>(Api.hospital_depart.replace('{hoscode}', hoscode))
+}
+export const cardDepartBookingReq = (page: number, limit: number, hoscode: string, depcode: string) => {
+    return request.get<any, Response<Booking>>(Api.hospital_depart_booking
+        .replace('{page}', String(page))
+        .replace('{limit}', String(limit))
+        .replace('{hoscode}', hoscode)
+        .replace('{depcode}', depcode))
 }

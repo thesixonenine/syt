@@ -3,6 +3,7 @@
 
 import axios from 'axios';
 import {ElMessage} from "element-plus";
+import userStore from "@/store/modules/user.ts";
 
 const request = axios.create({
     baseURL: '/api',
@@ -10,6 +11,10 @@ const request = axios.create({
 });
 // 请求拦截器
 request.interceptors.request.use((config) => {
+    let token = userStore().info.token;
+    if (token) {
+        config.headers.token = token;
+    }
     return config;
 });
 
