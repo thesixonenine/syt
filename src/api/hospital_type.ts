@@ -67,3 +67,29 @@ export interface Booking {
     bookingScheduleList: BookingSchedule[],
     baseMap: BookingBase,
 }
+
+export interface DoctorParam {
+    dayOfWeek: string,
+    depname: string,
+    hosname: string,
+}
+
+export interface Doctor {
+    id: string,
+    createTime: string,
+    updateTime: string,
+    isDelete: number,
+    param: DoctorParam,
+    hoscode: string,
+    depcode: string,
+    title: string,
+    docname: string,
+    skill: string,
+    workDate: string,
+    workTime: number,
+    reservedNumber: number,
+    availableNumber: number,
+    amount: number,
+    status: number,
+    hosScheduleId: string,
+}
